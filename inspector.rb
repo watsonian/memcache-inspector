@@ -55,13 +55,48 @@ def item_keys(cachedump)
   keys
 end
 
-mem_location = item_mem_locations(stats_items)
+def item_value(raw_fetch)
+  raw_fetch.split("\r\n")[1][4..-1]
+end
+
+def print_separator(character="=", count=60, lines=1)
+  lines.times do
+    puts character*count
+  end
+end
+
+def display_keys(keys)
+  puts "Keys:"
+  keys.each_with_index do |v,i|
+    puts " [#{i}] #{v}"
+  end
+end
+
+mem_locations = item_mem_locations(stats_items)
 
 keys = []
-mem_location.each do |l|
+mem_locations.each do |l|
   keys += item_keys(stats_cachedump(l))
 end
-puts "Keys:"
-keys.each_with_index do |v,i|
-  puts " [#{i}] #{v}"
-end
+
+# Display & Inspect keys
+loop {
+  trap(:INT) {
+    puts
+    puts "exiting..."
+    exit
+  }
+  
+  display_keys(keys)
+  print "Which key do you want to inspect? "
+  key_index = gets.chomp
+  if key_index =~ /[0-9]+/
+    print_separator
+    puts item_value(get(keys[key_index.to_i]))
+    key_index = nil
+    print_separator
+  else
+    puts " Please input one of the listed key indexes."
+  end
+  puts # empty line
+}

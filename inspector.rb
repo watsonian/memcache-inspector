@@ -60,7 +60,7 @@ def item_value(raw_fetch)
   raw_fetch.split("\r\n")[1][4..-1]
 end
 
-def print_separator(character="=", count=60, lines=1)
+def print_separator(character="=", count=40, lines=1)
   lines.times do
     puts character*count
   end
@@ -92,10 +92,13 @@ loop {
   print "Which key do you want to inspect? "
   key_index = gets.chomp
   if key_index =~ /[0-9]+/
-    print_separator
-    puts item_value(get(keys[key_index.to_i]))
+    key_index = key_index.to_i
+    print_separator(">>")
+    puts "KEY: #{keys[key_index]}"
+    print_separator(">>")
+    puts item_value(get(keys[key_index]))
     key_index = nil
-    print_separator
+    print_separator("<<",40,2)
   else
     puts " Please input one of the listed key indexes."
   end

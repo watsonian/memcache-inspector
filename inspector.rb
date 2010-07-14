@@ -1,4 +1,3 @@
-require 'pp'
 require 'ostruct'
 require 'socket'
 
@@ -32,6 +31,10 @@ def stats_cachedump(mem_location, length=100)
   memcache_do("stats cachedump #{mem_location} #{length}")
 end
 
+def get(key)
+  memcache_do("get #{key}")
+end
+
 def item_mem_locations(items)
   mem_locations = []
   items.split("\r\n").each do |item|
@@ -59,4 +62,6 @@ mem_location.each do |l|
   keys += item_keys(stats_cachedump(l))
 end
 puts "Keys:"
-pp keys.inspect
+keys.each_with_index do |i,v|
+  puts " [#{i}] #{v}"
+end

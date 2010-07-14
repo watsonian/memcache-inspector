@@ -62,6 +62,6 @@ mem_location.each do |l|
   keys += item_keys(stats_cachedump(l))
 end
 puts "Keys:"
-keys.each_with_index do |i,v|
+keys.each_with_index do |v,i|
   puts " [#{i}] #{v}"
 end

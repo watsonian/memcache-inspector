@@ -76,7 +76,9 @@ end
 mem_locations = item_mem_locations(stats_items)
 
 keys = []
+puts "Processing #{mem_locations.size} memory location(s)."
 mem_locations.each do |l|
+  puts "* fetching keys at #{l}..."
   keys += item_keys(stats_cachedump(l))
 end
 

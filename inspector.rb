@@ -73,15 +73,35 @@ def display_keys(keys)
   end
 end
 
-mem_locations = item_mem_locations(stats_items)
-
-keys = []
-puts "Processing #{mem_locations.size} memory location(s)."
-mem_locations.each do |l|
-  puts "* fetching keys at #{l}..."
-  keys += item_keys(stats_cachedump(l))
+def fetch_keys(mem_locations, limit=nil)
+  if limit && limit.to_i == 0
+    puts "* No memory locations were fetched. Exiting..."
+    exit
+  end
+  keys = []
+  puts "Processing #{mem_locations.size} memory location(s)."
+  mem_locations.each_with_index do |l,i|
+    break if limit && i == limit.to_i
+    puts "* fetching keys at #{l}..."
+    keys += item_keys(stats_cachedump(l))
+  end
+  keys
 end
 
+trap(:INT) {
+  puts
+  puts "exiting..."
+  exit
+}
+
+mem_locations = item_mem_locations(stats_items)
+print "Fetch how many memory locations (#{mem_locations.size} possible)? [# or (A)ll] "
+limit = gets.chomp
+if limit =~ /[Aa](ll)?/
+  keys = fetch_keys(mem_locations)
+else
+  keys = fetch_keys(mem_locations, limit)
+end
 # Display & Inspect keys
 loop {
   trap(:INT) {
@@ -102,7 +122,8 @@ loop {
     key_index = nil
     print_separator("<<",40,2)
   else
-    puts " Please input one of the listed key indexes."
+    puts
+    puts " !! Please input one of the listed key indexes."
   end
   puts # empty line
 }
